@@ -8,10 +8,15 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Connect to MongoDB (Replace with your URI)
-mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log("MongoDB Connected"))
-  .catch(err => console.error("MongoDB Connection Error:", err));
+
+mongoose.connect("")
+  .then(()=>{
+    console.log("connected to DB");
+    app.listen(3000,()=>{
+        console.log('server is running on port 3000')
+    });
+  })
+  .catch(()=>console.log('connection failed'));
 
 // Define Schema
 const PincodeSchema = new mongoose.Schema({
@@ -21,13 +26,12 @@ const PincodeSchema = new mongoose.Schema({
 const Pincode = mongoose.model("Pincode", PincodeSchema);
 
 // **API Endpoint to Validate Address**
-app.post("/api/validate-address", async (req, res) => {
+app.post("/homepage", async (req, res) => {
   const { address, pinCode } = req.body;
 
   try {
     // Check in MongoDB first
-    const record = await Pincode.findOne({ address });
-
+    
     if (record) {
       return res.json({ correctedPin: record.pinCode, source: "Database" });
     }
